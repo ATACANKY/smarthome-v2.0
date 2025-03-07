@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f0f0; }
+        .container { text-align: center; }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 200px; margin: 20px auto; }
+        .keypad button { padding: 20px; font-size: 1.5em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Şifre Girişi</h1>
+        <div class="keypad">
+            <button onclick="appendNumber(1)">1</button>
+            <button onclick="appendNumber(2)">2</button>
+            <button onclick="appendNumber(3)">3</button>
+            <button onclick="appendNumber(4)">4</button>
+            <button onclick="appendNumber(5)">5</button>
+            <button onclick="appendNumber(6)">6</button>
+            <button onclick="appendNumber(7)">7</button>
+            <button onclick="appendNumber(8)">8</button>
+            <button onclick="appendNumber(9)">9</button>
+            <button onclick="clearInput()">C</button>
+            <button onclick="appendNumber(0)">0</button>
+            <button onclick="checkPassword()">OK</button>
+        </div>
+        <input type="password" id="passwordInput" style="display:none;">
+    </div>
+    <script>
+        var password = "2670";
+        function appendNumber(num) {
+            var input = document.getElementById('passwordInput');
+            input.value += num;
+        }
+        function clearInput() {
+            document.getElementById('passwordInput').value = '';
+        }
+        function checkPassword() {
+            var input = document.getElementById('passwordInput').value;
+            if (input === password) {
+                alert("Şifre doğru \n \n Sayfaya girmek için Tamam'a tıklayın");
+                location = "control.html";
+            } else {
+                location = "yanlis.html";
+            }
+        }
+    </script>
+</body>
+</html>

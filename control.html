@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontrol Paneli</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f0f0; }
+        .container { text-align: center; }
+        button { padding: 10px 20px; margin: 5px; font-size: 1em; }
+        input[type="color"] { padding: 5px; margin: 5px; }
+        .status { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kontrol Paneli</h1>
+        <button onclick="controlDevice('neopixel', 'on')">Neopixel Aç</button>
+        <button onclick="controlDevice('neopixel', 'off')">Neopixel Kapat</button>
+        <button onclick="controlDevice('role', 'on')">Role Aç</button>
+        <button onclick="controlDevice('role', 'off')">Role Kapat</button>
+        <br>
+        <input type="color" id="colorPicker" value="#ff0000">
+        <button onclick="setColor()">Renk Ayarla</button>
+        <button onclick="controlDevice('neopixel', 'rainbow')">Rainbow Modu</button>
+        <div class="status">
+            <h2>Bağlı Cihazlar</h2>
+            <ul id="deviceStatus"></ul>
+        </div>
+    </div>
+    <script>
+        function controlDevice(device, action) {
+            fetch(`control.php?device=${device}&action=${action}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`${device} ${action} başarılı`);
+                        updateStatus();
+                    } else {
+                        alert(`${device} ${action} başarısız`);
+                    }
+                });
+        }
+
+        function setColor() {
+            var color = document.getElementById('colorPicker').value;
+            fetch(`control.php?device=neopixel&action=color&color=${color.substring(1)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Renk ayarlandı`);
+                        updateStatus();
+                    } else {
+                        alert(`Renk ayarlanamadı`);
+                    }
+                });
+        }
+
+        function updateStatus() {
+            fetch('role_status.json')
+                .then(response => response.json())
+                .then(data => {
+                    var roleStatus = data.status ? 'Açık' : 'Kapalı';
+                    document.getElementById('deviceStatus').innerHTML = `<li>Role: ${roleStatus}</li>`;
+                });
+
+            fetch('neopixel_status.json')
+                .then(response => response.json())
+                .then(data => {
+                    var neopixelStatus = data.status ? 'Açık' : 'Kapalı';
+                    document.getElementById('deviceStatus').innerHTML += `<li>Neopixel: ${neopixelStatus}</li>`;
+                });
+
+            fetch('devices_status.json')
+                .then(response => response.json())
+                .then(data => {
+                    var devicesList = data.devices.map(device => `<li>${device.name}: ${device.status ? 'Bağlı' : 'Bağlı Değil'}</li>`).join('');
+                    document.getElementById('deviceStatus').innerHTML += devicesList;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', updateStatus);
+    </script>
+</body>
+</html>
